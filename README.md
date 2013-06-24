@@ -1,0 +1,36 @@
+# impcount - a simple Arduino impulse counter
+
+## Short description
+Connect S0 counters to Arduino's digital pins and this sketch will print the duration between two signals to the serial port. Interrupts are used when the pin supports it, so the `loop()` function may do other things.
+
+## Releases
+### 1.0 (24.06.2013)
+#### Arduino
+Hier läuft hier das kleine Programm impcount, das auf digitalen Ports lauscht, beim Anliegen eines Signals die Dauer seit dem vorigen Signal berechnet und diese auf die serielle Schnittstelle schreibt.
+
+Das Lauschen könnte über Polling ("Busy Waiting") implementiert werden, d.h. das Programm prüft regelmäßig, ob ein Signal anliegt. Der Arduino kennt aber auch das Konzept von Interrupts: damit wird automatisch beim Anliegen eines Signals eine Funktion aufgerufen. Interrupts gibt es nur für ausgewählte Pins, die von der Arduino-Hardware abhängen. Ich habe mich für einen Mega2560 entschieden, dieser erlaubt 6 Interrupt-Pins. Die kleineren Modelle haben 2, beim Modell Due sind alle Pins Interrupt-fähig.
+
+Das Programm impcount verwendet Interrupts, sofern der Zähler an einem dafür geeigneten Pin angeschlossen ist. An allen anderen Pins wird per Busy Waiting verfahren. Wenn man nicht mehr Zähler anschließen möchte als Interrupt-Pins zur Verfügung stehen, kann man natürlich die `loop()`-Funktion auch anderweitig nutzen.
+
+#### fhem
+Jetzt müssen die Werte von der seriellen Schnittstelle noch in fhem eingelesen werden. Ich habe folgende Module gefunden, die mir hilfreich erscheinen.
+
+#####ECMD
+Mit [ECMD](http://www.fhemwiki.de/wiki/ECMD) habe ich es geschafft, die Daten vom Arduino abzufragen. Ich war damit aber nicht ganz zufrieden, weil ECMD für "Request/Response-like communication" gedacht ist. Das heißt, fhem muss regelmäßig aktiv Werte vom Arduino abfragen. Dieses Vorgehen ist völlig in Ordnung, wenn ein Sensor dauerhaft einen Wert liefert, wie z.B. ein Thermometer. Für Impulssignale passt es aber leider nicht, weil man zur richtigen Zeit abfragen müsste. Man kann natürlich die Daten auch auf dem Arduino zwischenspeichern; das Programm dort wird dadurch aber komplexer, und man muss sich dann auch um Pufferüberläufe kümmern, auf dem seriellen Port lauschen, etc.
+
+#####WHR962
+Im Foreneintrag zum Modul [WHR962](http://forum.fhem.de/index.php/topic,10290.msg57862.html#msg57862) habe ich gelernt, dass man wohl auch in FHEM automatisch auf das Eintreffen von Daten über die serielle Schnittstelle reagieren kann. Ich habe das Modul als Vorlage genommen und möchte an dieser Stelle herzlich beim Autor, Joachim, für die Veröffentlichung bedanken.
+
+#####IMPCOUNT
+Mit Hilfe von WHR962 habe ich ein Modul namens IMPCOUNT geschrieben, das auf meinen Anwendungsfall passt; es ist so weit verallgemeinert, dass es auch für andere impuls-basierte Zähler verwendet werden kann. Es passiert eigentlich nicht viel: die Werte des Arduino werden gepuffert, auf Wunsch umgerechnet und gespeichert. Details zur Implementierung sind im Modul dokumentiert.
+
+####Konfiguration
+Was jetzt noch fehlt, sind ein paar Einträge in der `fhem.cfg` und ein Skript zum Zeichnen von Diagrammen namens `my_impcount.gplot`.
+
+Der Arduino-Sketch namens `s0_dummy_sender` ist zum Testen gedacht. Er gibt in regelmäßigen Abständen zufällige Werte aus, sodass das fhem-Modul `IMPCOUNT` auch ohne S0-Zähler getestet werden kann.
+
+## Discussion on the FHEM forum
+[Wie kann ich einige S0-Zähler mit fhem auf einer Fritz!Box 7390 auslesen?](http://forum.fhem.de/index.php?topic=13155.0)
+[Stromzähler mit S0 Schnittstelle nochmals](http://forum.fhem.de/index.php?topic=19285.0)
+[Firmata UND Impcount and einem Arduino?](http://forum.fhem.de/index.php?topic=15245.0)
+

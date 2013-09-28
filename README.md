@@ -29,6 +29,16 @@ Was jetzt noch fehlt, sind ein paar Einträge in der `fhem.cfg` und ein Skript zu
 
 Der Arduino-Sketch namens `s0_dummy_sender` ist zum Testen gedacht. Er gibt in regelmäßigen Abständen zufällige Werte aus, sodass das fhem-Modul `IMPCOUNT` auch ohne S0-Zähler getestet werden kann.
 
+### 2.0 (28.09.2013)
+Erweiterung von `impcount` um die Möglichkeit, Signale mit einer konfigurierbaren Dauer als ungültig zu markieren und herauszufiltern.
+
+####Change Log
+* Ausgabe der Impulsdauer (eines einzelnen Impulses) zusätzlich zur Impulsdistanz (zwischen zwei Impulsen)
+* Angabe von minimal und maximal erlaubter Dauer je Pin
+* Trennung von Impulserfassung und Ausgabe; das reduziert die Zeit, in der aufgrund von Ausgaben keine Impulse erfasst werden können
+* Performance- und Interrupt-Optimierungen
+* (optional) Ausgabe einer Statistik über die Dauer zwischen zwei Poll-Abfragen
+
 ## Discussion on the FHEM forum
 [Wie kann ich einige S0-Zähler mit fhem auf einer Fritz!Box 7390 auslesen?](http://forum.fhem.de/index.php?topic=13155.0)
 [Stromzähler mit S0 Schnittstelle nochmals](http://forum.fhem.de/index.php?topic=19285.0)

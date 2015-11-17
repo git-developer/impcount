@@ -1,0 +1,14 @@
+set terminal png transparent size <SIZE> crop
+set output '<OUT>.png'
+set xdata time
+set timefmt "%Y-%m-%d_%H:%M:%S"
+set xlabel " "
+set ytics
+set title '<L1>'
+set grid xtics ytics
+set ylabel "Verbrauch in kWh"
+
+#FileLog 4::0
+plot \
+ "< egrep 'impulse_counter' <IN>"\
+  using 1:3 axes x1y1 title '' with lines lw2,\

@@ -3,6 +3,9 @@
 ## Short description
 Connect S0 counters to Arduino's digital pins and this sketch will print the duration between two signals to the serial port. Interrupts are used when the pin supports it, so the `loop()` function may do other things.
 
+## Project status
+This project is no longer maintained. It was developed on the FHEM forum in 2013 and moved to GitHub in 2015.
+
 ## Releases
 ### 1.0 (24.06.2013)
 #### Arduino

@@ -1,7 +1,7 @@
-# impcount - a simple Arduino impulse counter
+# impcount
 
 ## Short description
-Connect S0 counters to Arduino's digital pins and this sketch will print the duration between two signals to the serial port. Interrupts are used when the pin supports it, so the `loop()` function may do other things.
+impcount is a simple Arduino impulse counter. Connect S0 counters to Arduino's digital pins and this sketch will print the duration between two signals to the serial port. Interrupts are used when the pin supports it, so the `loop()` function may do other things.
 
 ## Project status
 This project is no longer maintained. It was developed on the FHEM forum in 2013 and moved to GitHub in 2015.
@@ -43,7 +43,7 @@ Erweiterung von `impcount` um die Möglichkeit, Signale mit einer konfigurierbare
 * (optional) Ausgabe einer Statistik über die Dauer zwischen zwei Poll-Abfragen
 
 ## Discussion on the FHEM forum
-[Wie kann ich einige S0-Zähler mit fhem auf einer Fritz!Box 7390 auslesen?](http://forum.fhem.de/index.php?topic=13155.0)
-[Stromzähler mit S0 Schnittstelle nochmals](http://forum.fhem.de/index.php?topic=19285.0)
-[Firmata UND Impcount and einem Arduino?](http://forum.fhem.de/index.php?topic=15245.0)
+* [Wie kann ich einige S0-Zähler mit fhem auf einer Fritz!Box 7390 auslesen?](http://forum.fhem.de/index.php?topic=13155.0)
+* [Stromzähler mit S0 Schnittstelle nochmals](http://forum.fhem.de/index.php?topic=19285.0)
+* [Firmata UND Impcount and einem Arduino?](http://forum.fhem.de/index.php?topic=15245.0)
 

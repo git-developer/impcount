@@ -9,41 +9,46 @@ This project is no longer maintained. It was developed on the FHEM forum in 2013
 ## Releases
 ### 1.0 (24.06.2013)
 #### Arduino
-Hier läuft hier das kleine Programm impcount, das auf digitalen Ports lauscht, beim Anliegen eines Signals die Dauer seit dem vorigen Signal berechnet und diese auf die serielle Schnittstelle schreibt.
+Hier lÃ¤uft hier das kleine Programm impcount, das auf digitalen Ports lauscht, beim Anliegen eines Signals die Dauer seit dem vorigen Signal berechnet und diese auf die serielle Schnittstelle schreibt.
 
-Das Lauschen könnte über Polling ("Busy Waiting") implementiert werden, d.h. das Programm prüft regelmäßig, ob ein Signal anliegt. Der Arduino kennt aber auch das Konzept von Interrupts: damit wird automatisch beim Anliegen eines Signals eine Funktion aufgerufen. Interrupts gibt es nur für ausgewählte Pins, die von der Arduino-Hardware abhängen. Ich habe mich für einen Mega2560 entschieden, dieser erlaubt 6 Interrupt-Pins. Die kleineren Modelle haben 2, beim Modell Due sind alle Pins Interrupt-fähig.
+Das Lauschen kÃ¶nnte Ã¼ber Polling ("Busy Waiting") implementiert werden, d.h. das Programm prÃ¼ft regelmÃ¤ÃŸig, ob ein Signal anliegt. Der Arduino kennt aber auch das Konzept von Interrupts: damit wird automatisch beim Anliegen eines Signals eine Funktion aufgerufen. Interrupts gibt es nur fÃ¼r ausgewÃ¤hlte Pins, die von der Arduino-Hardware abhÃ¤ngen. Ich habe mich fÃ¼r einen Mega2560 entschieden, dieser erlaubt 6 Interrupt-Pins. Die kleineren Modelle haben 2, beim Modell Due sind alle Pins Interrupt-fÃ¤hig.
 
-Das Programm impcount verwendet Interrupts, sofern der Zähler an einem dafür geeigneten Pin angeschlossen ist. An allen anderen Pins wird per Busy Waiting verfahren. Wenn man nicht mehr Zähler anschließen möchte als Interrupt-Pins zur Verfügung stehen, kann man natürlich die `loop()`-Funktion auch anderweitig nutzen.
+Das Programm impcount verwendet Interrupts, sofern der ZÃ¤hler an einem dafÃ¼r geeigneten Pin angeschlossen ist. An allen anderen Pins wird per Busy Waiting verfahren. Wenn man nicht mehr ZÃ¤hler anschlieÃŸen mÃ¶chte als Interrupt-Pins zur VerfÃ¼gung stehen, kann man natÃ¼rlich die `loop()`-Funktion auch anderweitig nutzen.
 
 #### fhem
-Jetzt müssen die Werte von der seriellen Schnittstelle noch in fhem eingelesen werden. Ich habe folgende Module gefunden, die mir hilfreich erscheinen.
+Jetzt mÃ¼ssen die Werte von der seriellen Schnittstelle noch in fhem eingelesen werden. Ich habe folgende Module gefunden, die mir hilfreich erscheinen.
 
 #####ECMD
-Mit [ECMD](http://www.fhemwiki.de/wiki/ECMD) habe ich es geschafft, die Daten vom Arduino abzufragen. Ich war damit aber nicht ganz zufrieden, weil ECMD für "Request/Response-like communication" gedacht ist. Das heißt, fhem muss regelmäßig aktiv Werte vom Arduino abfragen. Dieses Vorgehen ist völlig in Ordnung, wenn ein Sensor dauerhaft einen Wert liefert, wie z.B. ein Thermometer. Für Impulssignale passt es aber leider nicht, weil man zur richtigen Zeit abfragen müsste. Man kann natürlich die Daten auch auf dem Arduino zwischenspeichern; das Programm dort wird dadurch aber komplexer, und man muss sich dann auch um Pufferüberläufe kümmern, auf dem seriellen Port lauschen, etc.
+Mit [ECMD](http://www.fhemwiki.de/wiki/ECMD) habe ich es geschafft, die Daten vom Arduino abzufragen. Ich war damit aber nicht ganz zufrieden, weil ECMD fÃ¼r "Request/Response-like communication" gedacht ist. Das heiÃŸt, fhem muss regelmÃ¤ÃŸig aktiv Werte vom Arduino abfragen. Dieses Vorgehen ist vÃ¶llig in Ordnung, wenn ein Sensor dauerhaft einen Wert liefert, wie z.B. ein Thermometer. FÃ¼r Impulssignale passt es aber leider nicht, weil man zur richtigen Zeit abfragen mÃ¼sste. Man kann natÃ¼rlich die Daten auch auf dem Arduino zwischenspeichern; das Programm dort wird dadurch aber komplexer, und man muss sich dann auch um PufferÃ¼berlÃ¤ufe kÃ¼mmern, auf dem seriellen Port lauschen, etc.
 
 #####WHR962
-Im Foreneintrag zum Modul [WHR962](http://forum.fhem.de/index.php/topic,10290.msg57862.html#msg57862) habe ich gelernt, dass man wohl auch in FHEM automatisch auf das Eintreffen von Daten über die serielle Schnittstelle reagieren kann. Ich habe das Modul als Vorlage genommen und möchte an dieser Stelle herzlich beim Autor, Joachim, für die Veröffentlichung bedanken.
+Im Foreneintrag zum Modul [WHR962](http://forum.fhem.de/index.php/topic,10290.msg57862.html#msg57862) habe ich gelernt, dass man wohl auch in FHEM automatisch auf das Eintreffen von Daten Ã¼ber die serielle Schnittstelle reagieren kann. Ich habe das Modul als Vorlage genommen und mÃ¶chte an dieser Stelle herzlich beim Autor, Joachim, fÃ¼r die VerÃ¶ffentlichung bedanken.
 
 #####IMPCOUNT
-Mit Hilfe von WHR962 habe ich ein Modul namens IMPCOUNT geschrieben, das auf meinen Anwendungsfall passt; es ist so weit verallgemeinert, dass es auch für andere impuls-basierte Zähler verwendet werden kann. Es passiert eigentlich nicht viel: die Werte des Arduino werden gepuffert, auf Wunsch umgerechnet und gespeichert. Details zur Implementierung sind im Modul dokumentiert.
+Mit Hilfe von WHR962 habe ich ein Modul namens IMPCOUNT geschrieben, das auf meinen Anwendungsfall passt; es ist so weit verallgemeinert, dass es auch fÃ¼r andere impuls-basierte ZÃ¤hler verwendet werden kann. Es passiert eigentlich nicht viel: die Werte des Arduino werden gepuffert, auf Wunsch umgerechnet und gespeichert. Details zur Implementierung sind im Modul dokumentiert.
 
 ####Konfiguration
-Was jetzt noch fehlt, sind ein paar Einträge in der `fhem.cfg` und ein Skript zum Zeichnen von Diagrammen namens `my_impcount.gplot`.
+Was jetzt noch fehlt, sind ein paar EintrÃ¤ge in der `fhem.cfg` und ein Skript zum Zeichnen von Diagrammen namens `my_impcount.gplot`.
 
-Der Arduino-Sketch namens `s0_dummy_sender` ist zum Testen gedacht. Er gibt in regelmäßigen Abständen zufällige Werte aus, sodass das fhem-Modul `IMPCOUNT` auch ohne S0-Zähler getestet werden kann.
+Der Arduino-Sketch namens `s0_dummy_sender` ist zum Testen gedacht. Er gibt in regelmÃ¤ÃŸigen AbstÃ¤nden zufÃ¤llige Werte aus, sodass das fhem-Modul `IMPCOUNT` auch ohne S0-ZÃ¤hler getestet werden kann.
 
 ### 2.0 (28.09.2013)
-Erweiterung von `impcount` um die Möglichkeit, Signale mit einer konfigurierbaren Dauer als ungültig zu markieren und herauszufiltern.
+Erweiterung von `impcount` um die MÃ¶glichkeit, Signale mit einer konfigurierbaren Dauer als ungÃ¼ltig zu markieren und herauszufiltern.
 
 ####Change Log
-* Ausgabe der Impulsdauer (eines einzelnen Impulses) zusätzlich zur Impulsdistanz (zwischen zwei Impulsen)
+* Ausgabe der Impulsdauer (eines einzelnen Impulses) zusÃ¤tzlich zur Impulsdistanz (zwischen zwei Impulsen)
 * Angabe von minimal und maximal erlaubter Dauer je Pin
-* Trennung von Impulserfassung und Ausgabe; das reduziert die Zeit, in der aufgrund von Ausgaben keine Impulse erfasst werden können
+* Trennung von Impulserfassung und Ausgabe; das reduziert die Zeit, in der aufgrund von Ausgaben keine Impulse erfasst werden kÃ¶nnen
 * Performance- und Interrupt-Optimierungen
-* (optional) Ausgabe einer Statistik über die Dauer zwischen zwei Poll-Abfragen
+* (optional) Ausgabe einer Statistik Ã¼ber die Dauer zwischen zwei Poll-Abfragen
+
+## Performance
+Tests mit StromzÃ¤hlern haben gezeigt, dass die Verwendung von Interrupts in der Praxis selten notwendig sein sollte. Die vorliegenden StromzÃ¤hler liefern 1000 Impulse pro Wh, die Impulsdauer betrÃ¤gt ca. 60ms. Der Arduino ist mit 16 MHz getaktet.
+Die `loop()`-Methode des Arduino-Sketches liest nacheinander alle digitalen EingÃ¤nge ein und sendet im Fall eines Signalwechsels eine Nachricht Ã¼ber die serielle Schnittstelle. Wie lange dauert ein Durchlauf? Ich habe das bei der Entwicklung mal gemessen: ca. 80 Âµs im Leerlauf und ca. 600 Âµs, falls ein Signal gemessen und Ã¼bermittelt wird (das entspricht also etwa 1280 bzw. 9600 Maschinenbefehlen).
+Lassen wir jetzt mal je 1 Impuls von 20 ZÃ¤hlern direkt nacheinander eintreffen. Wenn die einfach stumpf nacheinander abgearbeitet werden, dauert das also 12 ms. Man kÃ¶nnte natÃ¼rlich noch optimieren, indem man erst alle Signale eines Durchlaufs sammelt und gemeinsam Ã¼ber die serielle Schnittstelle schickt. Interrupts sind eine weitere MÃ¶glichkeit. Bei einer Impulsdauer von 60ms ist das aber nicht notwendig.
 
 ## Discussion on the FHEM forum
-* [Wie kann ich einige S0-Zähler mit fhem auf einer Fritz!Box 7390 auslesen?](http://forum.fhem.de/index.php?topic=13155.0)
-* [Stromzähler mit S0 Schnittstelle nochmals](http://forum.fhem.de/index.php?topic=19285.0)
+* [Wie kann ich einige S0-ZÃ¤hler mit fhem auf einer Fritz!Box 7390 auslesen?](http://forum.fhem.de/index.php?topic=13155.0)
+* [StromzÃ¤hler mit S0 Schnittstelle nochmals](http://forum.fhem.de/index.php?topic=19285.0)
 * [Firmata UND Impcount and einem Arduino?](http://forum.fhem.de/index.php?topic=15245.0)
 
